@@ -17,20 +17,8 @@ if not OPENAI_API_KEY:
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 client = OpenAI(api_key=os.environ['OPENAI_API_KEY'])
 
-# Life areas for analysis
-LIFE_AREAS = [
-    "Health",
-    "Career",
-    "Finances",
-    "Personal Growth",
-    "Relationships",
-    "Leisure",
-    "Environment",
-    "Self-Realization"
-]
-
-# Tooltips for LIFE_AREAS
-TOOLTIPS = {
+# Define life areas and their descriptions
+LIFE_AREAS = {
     "Health": "Your physical and mental well-being.",
     "Career": "Your job satisfaction and growth.",
     "Finances": "Your financial stability and goals.",
@@ -41,6 +29,7 @@ TOOLTIPS = {
     "Self-Realization": "Your sense of purpose and fulfillment."
 }
 
+# Life Balance Wheel Graph
 def plot_life_wheel(scores):
     # Generate categories and values
     categories = list(scores.keys())
@@ -82,6 +71,8 @@ def plot_life_wheel(scores):
 
     return fig
 
+
+# Get recommendations from OpenAI
 def get_recommendations(scores):
     analysis_request = f"""
     Analyze the following life areas based on these scores:
@@ -124,8 +115,8 @@ def main():
     st.sidebar.header("Rate Your Life Areas")
     scores = {}
     progress = 0
-    for area in LIFE_AREAS:
-        tooltip = TOOLTIPS.get(area, "")  # Get tooltip for the current area
+    for area in LIFE_AREAS.keys():
+        tooltip = LIFE_AREAS.get(area, "")  # Get tooltip for the current area
         scores[area] = st.sidebar.slider(area, 0, 10, 5, help=tooltip)
         progress += scores[area] / (10 * len(LIFE_AREAS))
 
