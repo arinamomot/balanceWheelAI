@@ -42,20 +42,44 @@ TOOLTIPS = {
 }
 
 def plot_life_wheel(scores):
-    # Generate a wheel chart
+    # Generate categories and values
     categories = list(scores.keys())
     values = list(scores.values())
     values += values[:1]  # Close the circle
 
+    # Colors for each section
+    COLORS = ['#FF9999', '#66B3FF', '#99FF99', '#FFCC99', '#FFD700', 
+              '#87CEFA', '#FF6347', '#FFB6C1']
+
+    # Calculate angles
     angles = np.linspace(0, 2 * np.pi, len(categories) + 1, endpoint=True)
 
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw={"polar": True})
-    ax.fill(angles, values, color="blue", alpha=0.25)
-    ax.plot(angles, values, color="blue", linewidth=2)
-    ax.set_yticks(range(0, 11, 2))
+    # Create a polar plot
+    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw={"polar": True})
+    ax.set_facecolor("white")
+
+    # Plot each section with a filled area
+    ax.fill(angles, values, color="white", alpha=0.5)
+    ax.bar(angles[:-1], values[:-1], width=2 * np.pi / len(categories),
+           color=COLORS, alpha=0.7, edgecolor='white')
+
+    # Customize labels
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(categories)
+    ax.set_xticklabels(categories, fontsize=12, color="black", fontweight="bold")
+
+    # Adjust y-axis (for scale)
+    ax.set_yticks(range(1, 11))
+    ax.set_yticklabels([])  # Hide radial labels
+    ax.set_ylim(0, 10)
+
+    # Add values on segments
+    for i, (angle, value) in enumerate(zip(angles[:-1], values[:-1])):
+        ax.text(angle, value, str(value), ha="center", va="center", 
+                fontsize=10, color="black", fontweight="bold")
+
+    # Add Title
     plt.title("Life Balance Wheel", size=16, y=1.1)
+
     return fig
 
 def get_recommendations(scores):
@@ -110,17 +134,17 @@ def main():
         with st.spinner("Analyzing your inputs..."):
             recommendations = get_recommendations(scores)
         
+        # Display Life Wheel
+        st.subheader("🌀 Your Life Balance Wheel")
+        fig = plot_life_wheel(scores)
+        st.pyplot(fig)
+        
         # Display results
         st.subheader("🎯 Your Recommendations")
         if recommendations:
             st.write(recommendations)
         else:
             st.error("Failed to generate recommendations. Please try again.")
-
-        # Display Life Wheel
-        st.subheader("🌀 Your Life Balance Wheel")
-        fig = plot_life_wheel(scores)
-        st.pyplot(fig)
 
 if __name__ == "__main__":
     main()
