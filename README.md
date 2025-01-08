@@ -1,6 +1,6 @@
 # balanceWheelAI
 
-## Try
+## Deployed
 https://balancewheelai.streamlit.app/
 
 ### Start page:
